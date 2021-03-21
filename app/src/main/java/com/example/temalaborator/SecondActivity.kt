@@ -3,43 +3,43 @@ package com.example.temalaborator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
 
 class SecondActivity : AppCompatActivity() {
-    private val arrayOfFragments:ArrayList<SecondFragment> = ArrayList<SecondFragment>()
+    private val stackOfFragments: Stack<SecondFragment> = Stack<SecondFragment>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
         val initialFragment: SecondFragment = SecondFragment("A2F1")
         makeTransaction(initialFragment)
-        arrayOfFragments.add(initialFragment)
+        stackOfFragments.push(initialFragment)
         val continueButton: Button = findViewById(R.id.continue_button_second)
         continueButton.setOnClickListener {
-            val currentPosition: Int = arrayOfFragments.size
+            val currentPosition: Int = stackOfFragments.size
             val nextPosition: Int = currentPosition + 1
             val text: String = "A2F$nextPosition"
             val nextFragment: SecondFragment = SecondFragment(text)
-            arrayOfFragments.add(nextFragment)
-            makeTransaction(arrayOfFragments[currentPosition])
+            stackOfFragments.push(nextFragment)
+            makeTransaction(stackOfFragments.peek())
         }
         val backButton: Button = findViewById(R.id.back_button)
         backButton.setOnClickListener {
-            val currentPosition: Int = arrayOfFragments.size - 1
-            if(currentPosition == 0) {
-                exitProcess(1)
+            if(stackOfFragments.empty()) {
+                exitProcess(0)
             }
-            val forwardPosition: Int = currentPosition - 1;
-            arrayOfFragments.removeAt(currentPosition)
-            makeTransaction(arrayOfFragments[forwardPosition])
+            stackOfFragments.pop()
+            makeTransaction(stackOfFragments.peek())
         }
         val exitButton: Button = findViewById(R.id.exit_button)
         exitButton.setOnClickListener {
-            exitProcess(1)
+            exitProcess(0)
         }
     }
     override fun onDestroy() {
         super.onDestroy()
-        arrayOfFragments.clear()
+        stackOfFragments.clear()
     }
     private fun makeTransaction(fragment: SecondFragment) {
         val transaction = supportFragmentManager.beginTransaction()
