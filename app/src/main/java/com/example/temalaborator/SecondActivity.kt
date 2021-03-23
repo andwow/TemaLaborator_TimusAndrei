@@ -1,5 +1,6 @@
 package com.example.temalaborator
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -25,15 +26,16 @@ class SecondActivity : AppCompatActivity() {
         }
         val backButton: Button = findViewById(R.id.back_button)
         backButton.setOnClickListener {
-            if(stackOfFragments.empty()) {
-                exitProcess(0)
+            if(stackOfFragments.size == 1) {
+                finish()
+            } else {
+                stackOfFragments.pop()
+                makeTransaction(stackOfFragments.peek())
             }
-            stackOfFragments.pop()
-            makeTransaction(stackOfFragments.peek())
         }
         val exitButton: Button = findViewById(R.id.exit_button)
         exitButton.setOnClickListener {
-            exitProcess(0)
+            finish()
         }
     }
     override fun onDestroy() {
